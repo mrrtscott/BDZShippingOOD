@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+
+<title>BDZ</title>
+</head>
+<body>
+	<nav  style="margin-bottom: 100px;">
+		<th:block th:replace="header :: nav"></th:block>
+	</nav>
+	
+	<div class="container">
+		<div class="panel panel-default">
+	      <div class="panel-heading"><h2>Tracking / Reference Number</h2></div>
+		      <div class="panel-body">
+		      	<div class="rows form-group">
+			      	<div class="row">
+			      		<div class="col-md-10">
+			      			<input type="text" id="trackingNumber" name="trackingNumber" class="form-control input-lg" autofocus="autofocus" placeholder="Search for..." />
+			      		</div>
+		              	<div class="col-md-2">
+		              		<button type="button" class="btn btn-lg" onclick="searchShipping()">Search!</button>
+		              	</div>
+			      	</div>
+			      	<div class="rows" style="margin-top: 30px;" th:if="!${shipping}">
+			      		<h3>Not Found</h3>
+			      	</div>
+			      	<div class="col-md-10">
+				      	<div class="panel panel-primary" style="margin-top: 30px;" th:if="${shipping}">
+					      	<div class="panel-heading">Detail Shipping</div>
+					      	<div class="panel-body">
+						      	<div class="rows">
+							        <div class="form-group">
+							        	<div class="col-md-3 text-right"><label>Tracking Number :</label></div>
+							            <div class="col-md-offset-4">
+							            	<label th:text="${shipping.trackingNumber}"></label>
+							            </div>
+							        </div>
+							        <div class="form-group">
+							        	<div class="col-md-3 text-right"><label>Description :</label></div>
+							            <div class="col-md-offset-4">
+							            	<label th:text="${shipping.description}"></label>
+							            </div>
+							        </div>
+							        <div class="form-group">
+							        	<div class="col-md-3 text-right"><label>Origin :</label></div>
+							            <div class="col-md-offset-4">
+							            	<label th:text="${shipping.origin}"></label>
+							            </div>
+							       	</div>
+							        <div class="form-group">
+							        	<div class="col-md-3 text-right"><label>Destination :</label></div>
+							            <div class="col-md-offset-4">
+							            	<label th:text="${shipping.destination}"></label>
+							            </div>
+							        </div>
+							        <div class="form-group">
+							        	<div class="col-md-3 text-right"><label>Dimensions :</label></div>
+							            <div class="col-md-offset-4">
+							            	<label th:text="${shipping.dimensions}"></label>
+							            </div>
+							        </div>
+							        <div class="form-group">
+							        	<div class="col-md-3 text-right"><label>Shipment Date :</label></div>
+							            <div class="col-md-offset-4">
+							            	<label th:text="${shipping.shipmentDate}"></label>
+							            </div>
+							        </div>
+						    	</div>
+					      	</div>
+						</div>
+					</div>
+		    	</div>
+		    </div>
+		</div>
+	</div>
+	<footer>
+        <th:block th:include="footer :: footer"></th:block>
+    </footer>
+	<script>
+		function searchShipping() {
+			var trackingNumber = document.getElementById("trackingNumber").value;
+			if (trackingNumber == "") {
+				trackingNumber = "empty";
+			}
+			window.location.href="/searchShipping/" + trackingNumber;
+		}
+	</script>
+</body>
+</html>

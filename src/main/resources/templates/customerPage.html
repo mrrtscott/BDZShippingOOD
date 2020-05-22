@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+
+<title>Customer Page</title>
+<style>
+	#menuselect li {
+		line-height: 1.42857143;
+    	cursor: pointer;
+    	padding: 10px 15px;
+	}
+	.hiddenDiv{
+		display: none;
+	}
+	.activeItem {
+		position: relative;
+	    display: block;
+	    color: #fff;
+    	background-color: #337ab7;
+    	border-radius: 4px;
+	}
+	
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#" th:href="@{/}">Registration and
+					Login Module</a>
+			</div>
+			<div id="navbar" class="nav navbar-nav navbar-right">
+				<form method="post" th:action="@{/logout-customer}">
+					<ul class="nav navbar-nav">
+						<li><input type="submit" class="btn btn-lg" style="background: none; color: #eee;" value="Logout"></li>
+					</ul>
+				</form>
+			</div>
+		</div>
+	</nav>
+
+	<br>
+	<br>
+	<div class="col-md-offset-1 col-md-10" style="margin-top: 100px;">
+
+		<div class="container-fluid">
+		  <div class="row content">
+		    <div class="col-sm-3 sidenav">
+		      <h4>Customer Panel</h4>
+		      <ul class="nav nav-pills nav-stacked" id="menuselect">
+		      	<li class="activeItem">MAKE A SHIPPING</li>
+		      	<li>VIEW ALL SHIPPING</li>    
+		      	<li>ADD ACCOUNT</li>    
+		      	<li>VIEW ALL ACCOUNTS</li>    
+		      </ul><br>
+		      
+		    </div>
+		
+		    <div class="col-sm-9">
+			    <div id="makeshipping" class="container-fluid bg-grey">
+			    	<h3>MAKE A SHIPPING</h3>
+			    	<hr>
+			    	<div class="rows">
+			    		<form  th:object="${shipping}"  method="post" th:action="@{/customerPage}">
+			    			<input type="hidden" th:field="*{trackingNumber}"/>
+			    			<input type="hidden" th:field="*{customerId}"/>
+					        <div class="form-group">
+					            <label>Description</label>
+					            <textarea th:field="*{description}" class="form-control" rows="5" id="description"></textarea>
+					        </div>
+					          <div class="form-group">
+					            <label>Billing Method</label>
+					             <select id="billingMethod" class="form-control" th:field="*{billingMethod}">
+		                        	<option value="Debit_Card">Debit_Card</option>
+		                        	<option value="Credit_Card">Credit_Card</option>
+		                        	<option value="Cash">Cash</option>
+		                        </select>
+					       	 </div>
+					       	 
+					        <div class="form-group">
+					            <label>Origin</label>
+					            <select id="origin" class="form-control" th:field="*{origin}">
+		                        	<option value="England">England</option>
+		                        	<option value="Jamaica">Jamaica</option>
+		                        </select>
+					        </div>
+					        <div class="form-group">
+					            <label>Destination</label>
+					            <select id="destination" class="form-control" th:field="*{destination}">
+		                        	<option value="England">England</option>
+		                        	<option value="Jamaica">Jamaica</option>
+		                        </select>
+					        </div>
+					        
+					        <div class="form-group">
+					            <label>Dimensions</label>
+					            <input id="dimensions" class="form-control" th:field="*{dimensions}" />
+					        </div>
+					        <button type="submit" class="btn btn-primary">Submit</button>
+					    </form>
+			    	</div>
+			    </div> 
+			    <div id="viewshipping" class="container-fluid bg-grey hiddenDiv">
+			    	<h3>View Shipping</h3><hr>
+			    	<div class="rows">
+			    	<table class="table table-striped">
+				        <tr>
+				        <td scope="row">Tracking Number</td>
+				        <td scope="row">Description</td>
+				        <td scope="row">Dimensions</td>
+				        <td scope="row">Origin</td>
+				        <td scope="row">Destination</td>
+				        <td scope="row">Shipment Date</td>
+				        <td scope="row">Shipment Status</td>
+				        <td scope="row">Price</td>
+				        <td scope="row">Update</td>
+				        </tr>
+				        <tbody>
+				            <tr th:each="shipping : ${shippingMyLists}">
+				                <td th:text="${shipping.trackingNumber}"></td>
+				                <td th:text="${shipping.description}"></td>
+				                <td th:text="${shipping.dimensions}"></td>
+				                <td th:text="${shipping.origin}"></td>
+				                <td th:text="${shipping.destination}"></td>
+				                <td th:text="${shipping.shipmentDate}" class="shipmentDate"></td>
+				                <td th:text="${shipping.shipmentStatus}"></td>
+				                <td th:text="${shipping.price}"></td>
+				                
+				                <td>
+				                    <a class="btn btn-primary updateBtn" th:href="@{/updateShipping/__${shipping.trackingNumber}__}"  role="button" >Update</a>
+				                </td>
+				            </tr>
+				        </tbody>
+				    </table>
+			    	</div>
+			    </div>
+			     <div id="viewaccount" class="container-fluid bg-grey hiddenDiv">
+			    	<h3>View Accounts</h3><hr>
+			    	<div class="rows">
+			    	<table class="table table-striped">
+				        <tr>
+				        <td scope="row">Account ID</td>
+				        <td scope="row">Billing Method</td>
+				        <td scope="row">Account Balance</td>
+				        </tr>
+				        <tbody>
+				            <tr th:each="account : ${customerAccountList}">
+				                <td th:text="${account.accountID}"></td>
+				             	 <td th:text="${account.billingMethod}"></td>
+				                <td th:text="${account.accountBalance}"></td> 
+				                
+				            </tr>
+				            <tr>
+				            <td colspan="2">Total Account Balance</td>
+				            <td th:text="${totalAccountBalance}"></td>
+				            
+				            </tr>
+				        </tbody>
+				    </table>
+			    	</div>
+			    </div>
+			    <div id="createaccount" class="container-fluid bg-grey hiddenDiv">
+			    	<h3>Create Account</h3><hr>
+			    	<div class="rows">
+			    		<form  th:object="${customerAccount}"  method="post" th:action="@{/addCustomerAccount}"> 
+			    			<input type="hidden" th:field="*{customerid}"/> 
+			    			  <div class="form-group">
+					            <label>Account ID</label>
+					            <input id="accountID" class="form-control" th:field="*{accountID}" />
+					       	 </div>
+					          <div class="form-group">
+					            <label>Billing Method</label>
+					             <select id="billingMethod" class="form-control" th:field="*{billingMethod}">
+		                        	<option value="Debit_Card">Debit_Card</option>
+		                        	<option value="Credit_Card">Credit_Card</option>
+		                        	<option value="Cash">Cash</option>
+		                        </select>
+					       	 </div>
+					          <div class="form-group">
+					            <label>Account Balance</label>
+					            <input id="accountBalance" class="form-control" th:field="*{accountBalance}" />
+					       	 </div>
+					      
+					        <button type="submit" class="btn btn-primary">Submit</button>
+					    </form>
+			    	</div>
+			    </div>
+		    </div>
+		  </div>
+		</div>
+	</div>
+	<footer>
+        <div th:include="footer :: footer"></div>
+    </footer>
+    <script>
+	    $("#menuselect li").click(function(e){
+	    	$("#menuselect").children().removeClass("activeItem");
+	        $(this).addClass("activeItem");
+	        if ($(this)[0].innerText == "VIEW ALL SHIPPING") {
+	        	$("#viewshipping").removeClass("hiddenDiv");
+	        	$("#makeshipping").addClass("hiddenDiv");
+	        	$("#viewaccount").addClass("hiddenDiv");
+	        	$("#createaccount").addClass("hiddenDiv");
+	        }
+	        if ($(this)[0].innerText == "MAKE A SHIPPING") {
+	        	$("#viewshipping").addClass("hiddenDiv");
+	        	$("#makeshipping").removeClass("hiddenDiv");
+	        	$("#viewaccount").addClass("hiddenDiv");
+	        	$("#createaccount").addClass("hiddenDiv");
+	        }
+	        if ($(this)[0].innerText == "ADD ACCOUNT") {
+	        	$("#viewshipping").addClass("hiddenDiv");
+	        	$("#makeshipping").addClass("hiddenDiv");
+	        	$("#viewaccount").addClass("hiddenDiv");
+	        	$("#createaccount").removeClass("hiddenDiv");
+	        }
+	        if ($(this)[0].innerText == "VIEW ALL ACCOUNTS") {
+	        	$("#viewshipping").addClass("hiddenDiv");
+	        	$("#makeshipping").addClass("hiddenDiv");
+	        	$("#viewaccount").removeClass("hiddenDiv");
+	        	$("#createaccount").addClass("hiddenDiv");
+	        }
+	    });
+	 // datetime to date string for tds of a table
+	    var date_td = $(".shipmentDate");
+	    for (var i=0; i< date_td.length; i++){
+	        date_td[i].innerHTML = String(date_td[i].innerHTML).split(" ")[0];
+	    }
+    </script>
+</body>
+</html>

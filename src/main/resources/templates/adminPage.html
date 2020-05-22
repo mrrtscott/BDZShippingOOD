@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>Registration</title>
+    <style>
+        #menuselect li {
+            line-height: 1.42857143;
+            cursor: pointer;
+            padding: 10px 15px;
+            font-size: 18px;
+        }
+        
+        .hiddenDiv {
+            display: none;
+        }
+        
+        .activeItem {
+            position: relative;
+            display: block;
+            color: #fff;
+            background-color: #337ab7;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+                <a class="navbar-brand" href="#" th:href="@{/}">BDZ Admin</a>
+            </div>
+            <div id="navbar" class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav">
+                    <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <br>
+    <br>
+    <div class="col-md-offset-1 col-md-10" style="margin-top: 100px;">
+
+        <div class="container-fluid">
+            <div class="row content">
+                <div class="col-sm-3 sidenav">
+                    <h4>Admin Panel</h4>
+                    <ul id="menuselect" class="nav nav-pills nav-stacked">
+                        <li class="activeItem">View Shipping</li>
+                        <li>ADD A MANIFEST</li>
+                        <li>MANIFEST</li>
+                        <li>STATUS CHANGE</li>
+                    </ul>
+                    <br>
+                </div>
+                <div class="col-sm-9">
+                    <div id="shipping" class="container-fluid bg-grey">
+                        <h3>View Shipping</h3>
+                        <hr>
+                        <div class="rows">
+                            <table class="table table-hover" style="cursor: pointer;">
+                                <tr>
+                                    <td scope="row">Tracking Number</td>
+                                    <td scope="row">Description</td>
+                                    <td scope="row">Dimensions</td>
+                                    <td scope="row">Origin</td>
+                                    <td scope="row">Destination</td>
+                                    <td scope="row">Status</td>
+                                    <td scope="row">Price</td>
+                                    <td scope="row">Details</td>
+                                    <td scope="row">Invoice</td>
+                                </tr>
+                                <tbody>
+                                    <tr th:each="shipping : ${shippingLists}" class="shippingTr">
+                                        <td th:text="${shipping.trackingNumber}"></td>
+                                        <td th:text="${shipping.description}"></td>
+                                        <td th:text="${shipping.dimensions}"></td>
+                                        <td th:text="${shipping.origin}"></td>
+                                        <td th:text="${shipping.destination}"></td>
+                                        <td th:text="${shipping.shipmentStatus}"></td>
+                                        <td width="300">
+                                            <form th:object="${shipping}" method="post" th:action="@{/changePrice}">
+                                                <input type="hidden" name="trackingNumber" th:value="${shipping.trackingNumber}">
+
+                                                <div class="input-group">
+                                                    <div class="input-group-btn">
+                                                        <button class="btn btn-default">
+															<i class="fa fa-dollar"></i>
+														</button>
+                                                    </div>
+                                                    <input type="number" class="form-control" th:value="${shipping.price}" name="price" style="width: 120px; display: inline;">
+                                                    <div class="input-group-btn">
+                                                        <button class="btn btn-info" type="submit">
+															<i class="fa fa-save"></i>
+														</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                        </td>
+                                        <td><a class="btn btn-info updateBtn" th:href="@{/detailShipment/__${shipping.trackingNumber}__}" role="button">Details</a></td>
+                                        <td><a class="btn btn-danger updateBtn" th:href="@{/invoice/__${shipping.trackingNumber}__}" role="button"><i class="fa fa-file-pdf-o"></i> &nbsp;Invoice</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="status" class="container-fluid bg-grey hiddenDiv">
+                        <h3>CHANGE SHIPPING STATUS</h3>
+                        <hr>
+                        <div class="rows">
+                            <table class="table table-striped">
+                                <tr>
+                                    <td scope="row">Tracking Number</td>
+                                    <td scope="row">Description</td>
+                                    <td scope="row">Dimensions</td>
+                                    <td scope="row">Origin</td>
+                                    <td scope="row">Destination</td>
+                                    <td scope="row">Status</td>
+                                </tr>
+                                <tbody>
+                                    <tr th:each="shipping : ${shippingLists}">
+                                        <td th:text="${shipping.trackingNumber}"></td>
+                                        <td th:text="${shipping.description}"></td>
+                                        <td th:text="${shipping.dimensions}"></td>
+                                        <td th:text="${shipping.origin}"></td>
+                                        <td th:text="${shipping.destination}"></td>
+                                        <td width="280">
+                                            <form th:object="${shipmentStatus}" method="post" th:action="@{/changeShipmentStatus}">
+                                                <input type="hidden" name="shippingId" th:value="${shipping.trackingNumber}"> <input type="hidden" class="hiddenstatus" th:value="${shipping.shipmentStatus}"> <select class="form-control" name="status" style="width: 150px; display: inline;">
+													<option value="Request_Made">Request_Made</option>
+													<option value="At_Origin">At_Origin</option>
+													<option value="Shipped">Shipped</option>
+													<option value="In_Transit">In_Transit</option>
+													<option value="At_Destination">At_Destination</option>
+													<option value="Customs_Hold">Customs_Hold</option>
+													<option value="Cleared">Cleared</option>
+													<option value="Delivered">Delivered</option>
+												</select>
+                                                <button type="submit" class="btn btn-primary">Change</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="viewmanifest" class="container-fluid bg-grey hiddenDiv">
+                        <h3 class="text-center text-primary">ManifestDocument</h3>
+                        <hr>
+                        <div class="rows">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <h4 class="form-group">Manifest Number</h4>
+                                </div>
+                                <div class="col-md-10">
+                                    <input type="text" id="searchManifestNumber" name="manifestNumber" class="form-control input-lg" autofocus="autofocus" placeholder="Search for..." />
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 30px;">
+                                <div class="col-md-offset-6">
+                                    <button type="button" class="btn btn-primary" onclick="searchManifest()">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="addmanifest" class="container-fluid bg-grey hiddenDiv">
+                        <h3>ADD A MANIFEST</h3>
+                        <hr>
+                        <div class="rows">
+                            <form th:object="${manifest}" method="post" th:action="@{/addmanifest}">
+                                <div class="form-group">
+                                    <label>Manifest Number</label> <input id="manifestNumber" class="form-control" th:field="*{manifestNumber}" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Vessel</label> <input id="vessel" class="form-control" th:field="*{vessel}" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Container</label> <input id="container" class="form-control" th:field="*{container}" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Shipments</label> <input id="shipments" class="form-control" th:field="*{shipments}" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label>Shipments</label>
+                                    <div id="destination" class="form-group">
+                                        <div th:each="shipping : ${shippingLists}">
+                                            <input type="checkbox" onclick="checkShipment()" class="checkboxes"> <label th:text="${shipping.trackingNumber}"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <th:block th:include="footer :: footer"></th:block>
+    </footer>
+    <script>
+        function searchManifest() {
+            var maniNumber = document.getElementById("searchManifestNumber").value;
+            if (maniNumber == "") {
+                maniNumber = "empty";
+            }
+            window.location.href = "/searchManifest/" + maniNumber;
+        }
+
+        function checkShipment() {
+            var checkboxes = $(".checkboxes");
+            var shipmentsStr = "";
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    var sh = checkboxes[i].nextElementSibling.innerHTML;
+                    shipmentsStr += sh + ",";
+                }
+            }
+            document.getElementById("shipments").value = shipmentsStr;
+        }
+
+        $("#menuselect li").click(function(e) {
+            $("#menuselect").children().removeClass("activeItem");
+            $(this).addClass("activeItem");
+            if ($(this)[0].innerText == "View Shipping") {
+                $("#shipping").removeClass("hiddenDiv");
+                $("#status").addClass("hiddenDiv");
+                $("#viewmanifest").addClass("hiddenDiv");
+                $("#addmanifest").addClass("hiddenDiv");
+            }
+            if ($(this)[0].innerText == "STATUS CHANGE") {
+                $("#status").removeClass("hiddenDiv");
+                $("#shipping").addClass("hiddenDiv");
+                $("#viewmanifest").addClass("hiddenDiv");
+                $("#addmanifest").addClass("hiddenDiv");
+            }
+            if ($(this)[0].innerText == "MANIFEST") {
+                $("#viewmanifest").removeClass("hiddenDiv");
+                $("#shipping").addClass("hiddenDiv");
+                $("#status").addClass("hiddenDiv");
+                $("#addmanifest").addClass("hiddenDiv");
+            }
+            if ($(this)[0].innerText == "ADD A MANIFEST") {
+                $("#addmanifest").removeClass("hiddenDiv");
+                $("#shipping").addClass("hiddenDiv");
+                $("#status").addClass("hiddenDiv");
+                $("#viewmanifest").addClass("hiddenDiv");
+            }
+        });
+
+        /* // datetime to date string for tds of a table
+        var date_td = $(".shipmentDate");
+        for (var i=0; i< date_td.length; i++){
+            date_td[i].innerHTML = String(date_td[i].innerHTML).split(" ")[0];
+        } */
+
+        // Set option values of select
+        var hiddens = $(".hiddenstatus");
+        for (var i = 0; i < hiddens.length; i++) {
+            var sel = $("select")[i].children;
+            for (var j = 0; j < sel.length; j++) {
+                if (sel[j].value == hiddens[i].value) {
+                    sel[j].selected = true;
+                }
+            }
+        }
+
+        /*  $(".shippingTr").click(function(e) {
+        	var trackingNumber = $(this).children()[0].innerHTML;
+        	window.location.href="/invoice/" + trackingNumber;
+        }) */
+    </script>
+
+</body>
+
+</html>

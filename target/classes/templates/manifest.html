@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css"
+	th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+
+<title>BDZ</title>
+</head>
+<body>
+	<nav  style="margin-bottom: 100px;">
+		<th:block th:replace="header :: nav"></th:block>
+	</nav>
+	
+	<div class="container">
+		<div class="panel panel-default">
+	      <div class="panel-heading"><h1>MANIFEST</h1></div>
+		      <div class="panel-body">
+		      	<div class="rows form-group">
+					<div id="detailmanifest" class="container-fluid bg-grey hiddenDiv">
+				    	
+				    	<div class="rows">
+					    	<div class="row">
+					      		<div class="form-group">
+					      			<div class="col-md-1"><label>Vessel:</label></div>
+					      			<div th:text="${manifest.vessel}"></div>
+					      		</div>
+					      		<div class="form-group">
+					      			<div class="col-md-1"><label>Container:</label></div>
+					      			<div th:text="${manifest.container}"></div>
+					      		</div>
+					      	</div>
+					    	<table class="table table-striped">
+						        <tr>
+						        <td scope="row">Tracking Number</td>
+						        <td scope="row">Description</td>
+						        <td scope="row">Dimensions</td>
+						        <td scope="row">Origin</td>
+						        <td scope="row">Destination</td>
+						        <td scope="row">Status</td>
+						        <!-- <td scope="row">Shipment Date</td> -->
+						        </tr>
+						        <tbody>
+						            <tr th:each="shipping : ${shippingLists}">
+						                <td th:text="${shipping.trackingNumber}"></td>
+						                <td th:text="${shipping.description}"></td>
+						                <td th:text="${shipping.dimensions}"></td>
+						                <td th:text="${shipping.origin}"></td>
+						                <td th:text="${shipping.destination}"></td>
+						                <td th:text="${shipping.shipmentStatus}"></td>
+						                <!-- <td th:text="${shipping.shipmentDate}" class="shipmentDate"></td> -->
+						            </tr>
+						        </tbody>
+						    </table>
+				    	</div>
+				    </div>
+				</div>
+		    </div>
+		</div>
+	</div>
+	<footer>
+        <th:block th:include="footer :: footer"></th:block>
+    </footer>
+	<script>
+		function searchShipping() {
+			var trackingNumber = document.getElementById("trackingNumber").value;
+			if (trackingNumber == "") {
+				trackingNumber = "empty";
+			}
+			window.location.href="/searchShipping/" + trackingNumber;
+		}
+	</script>
+</body>
+</html>
